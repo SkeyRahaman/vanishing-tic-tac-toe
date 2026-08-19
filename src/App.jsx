@@ -10,7 +10,7 @@ import WinOverlay from './components/WinOverlay';
 import RulesPopup from './components/RulesPopup';
 import HelpButton from './components/HelpButton';
 
-import { createInitialState, applyMove, getCellMap, encodeGameState, PLAYER1, PLAYER2 } from './engine/gameState';
+import { createInitialState, applyMove, getCellMap, encodeGameState, getLegalMoves, PLAYER1, PLAYER2 } from './engine/gameState';
 
 const CPU_THINK_DELAY_MS = 600; // ms before CPU places its mark
 
@@ -19,6 +19,7 @@ export default function App() {
   const [loadingTable, setLoadingTable] = useState(true);
 
   // Game state
+  const [difficulty, setDifficulty] = useState('easy'); // 'easy' | 'hard'
   const [gameState, setGameState] = useState(() => createInitialState(PLAYER1));
   const [scores, setScores] = useState({ [PLAYER1]: 0, [PLAYER2]: 0 });
   const [gameNum, setGameNum] = useState(1);
@@ -61,25 +62,34 @@ export default function App() {
         const stateKey = encodeGameState(prev);
         const entry = solverTable[stateKey];
 
-        // Direct bestMove lookup — computed by the Python solver
-        let cell = entry?.bestMove;
+        let cell = null;
+
+        if (difficulty === 'easy') {
+          // Easy mode strategy: 50% optimal move from table, 50% random legal move
+          const playOptimal = Math.random() < 0.5;
+          if (playOptimal && entry?.bestMove !== undefined && entry?.bestMove !== null) {
+            cell = entry.bestMove;
+          } else {
+            const legal = getLegalMoves(prev);
+            cell = legal[Math.floor(Math.random() * legal.length)];
+          }
+        } else {
+          // Hard mode: unbeatable lookup
+          cell = entry?.bestMove;
+        }
 
         if (cell === undefined || cell === null) {
-          // Fallback: pick a random legal move (should never happen)
-          const { queues } = prev;
-          const occupied = new Set([...queues[PLAYER1], ...queues[PLAYER2]]);
-          const myQ = queues[PLAYER2];
-          if (myQ.length >= 3) occupied.delete(myQ[0]);
-          const legal = [0,1,2,3,4,5,6,7,8].filter(i => !occupied.has(i));
+          // Fallback: pick a random legal move
+          const legal = getLegalMoves(prev);
           cell = legal[Math.floor(Math.random() * legal.length)];
-          console.warn('CPU fallback move — state not in table:', stateKey);
+          console.warn('CPU fallback move:', stateKey);
         }
 
         // Board snapshot for logging
         const { queues } = prev;
         const cellMap = getCellMap(prev);
         const board = Array.from({ length: 9 }, (_, i) => cellMap.get(i) || '.');
-        console.group(`%c🤖 CPU move → cell ${cell}`, 'color:#ff6b9d;font-weight:bold');
+        console.group(`%c🤖 CPU move (${difficulty}) → cell ${cell}`, 'color:#ff6b9d;font-weight:bold');
         console.log('Board before:', `\n${board.slice(0,3).join(' ')}\n${board.slice(3,6).join(' ')}\n${board.slice(6,9).join(' ')}`);
         console.log('P1 queue (X):', [...queues[PLAYER1]]);
         console.log('P2 queue (O):', [...queues[PLAYER2]]);
@@ -93,7 +103,7 @@ export default function App() {
     }, CPU_THINK_DELAY_MS);
 
     return () => clearTimeout(cpuTimerRef.current);
-  }, [gameState, solverTable, showWinOverlay]);
+  }, [gameState, solverTable, showWinOverlay, difficulty]);
 
   // ─── Win detection → show overlay + update score ─────────────────
   useEffect(() => {
@@ -171,6 +181,8 @@ export default function App() {
         scores={scores}
         currentPlayer={gameState.currentPlayer}
         gameNum={gameNum}
+        difficulty={difficulty}
+        onToggleDifficulty={setDifficulty}
       />
 
       <main className="game-area" role="main">
@@ -189,7 +201,7 @@ export default function App() {
       </main>
 
       {/* ─── Help FAB ─── */}
-      <HelpButton />
+      <HelpButton difficulty={difficulty} />
 
       {/* ─── Win Overlay ─── */}
       <AnimatePresence>

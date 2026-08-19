@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 /**
  * Leaderboard — sticky glass bar showing scores + active player indicator.
  */
-export default function Leaderboard({ scores, currentPlayer, gameNum }) {
+export default function Leaderboard({ scores, currentPlayer, gameNum, difficulty, onToggleDifficulty }) {
   const [bumpP1, setBumpP1] = useState(false);
   const [bumpP2, setBumpP2] = useState(false);
   const prevScores = useRef(scores);
@@ -46,9 +46,26 @@ export default function Leaderboard({ scores, currentPlayer, gameNum }) {
         <div className="leaderboard__indicator" aria-hidden="true" />
       </div>
 
-      {/* Centre divider */}
+      {/* Centre divider with difficulty toggle */}
       <div className="leaderboard__divider">
-        <span className="leaderboard__vs">VS</span>
+        <div className="difficulty-pill" role="group" aria-label="Select Difficulty">
+          <button
+            type="button"
+            className={`difficulty-pill__btn ${difficulty === 'easy' ? 'difficulty-pill__btn--active' : ''}`}
+            onClick={() => onToggleDifficulty('easy')}
+            aria-pressed={difficulty === 'easy'}
+          >
+            Easy
+          </button>
+          <button
+            type="button"
+            className={`difficulty-pill__btn ${difficulty === 'hard' ? 'difficulty-pill__btn--active' : ''}`}
+            onClick={() => onToggleDifficulty('hard')}
+            aria-pressed={difficulty === 'hard'}
+          >
+            Hard
+          </button>
+        </div>
         <span className="leaderboard__game">Game {gameNum}</span>
       </div>
 
