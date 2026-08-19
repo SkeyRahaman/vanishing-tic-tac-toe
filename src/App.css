@@ -100,11 +100,18 @@
   transform: scale(0.94);
 }
 
-.difficulty-pill__btn--active {
-  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(167, 139, 250, 0.25));
-  color: var(--text-primary);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+.difficulty-pill__btn--easy-active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.28), rgba(0, 180, 255, 0.35));
+  color: #ffffff;
+  border: 1px solid rgba(0, 229, 255, 0.6);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.4), inset 0 0 8px rgba(0, 229, 255, 0.2);
+}
+
+.difficulty-pill__btn--hard-active {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.3), rgba(255, 60, 120, 0.4));
+  color: #ffffff;
+  border: 1px solid rgba(255, 107, 157, 0.6);
+  box-shadow: 0 0 14px rgba(255, 107, 157, 0.4), inset 0 0 8px rgba(255, 107, 157, 0.2);
 }
 
 .leaderboard__game {

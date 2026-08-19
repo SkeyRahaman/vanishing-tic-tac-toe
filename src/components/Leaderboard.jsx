@@ -51,7 +51,7 @@ export default function Leaderboard({ scores, currentPlayer, gameNum, difficulty
         <div className="difficulty-pill" role="group" aria-label="Select Difficulty">
           <button
             type="button"
-            className={`difficulty-pill__btn ${difficulty === 'easy' ? 'difficulty-pill__btn--active' : ''}`}
+            className={`difficulty-pill__btn ${difficulty === 'easy' ? 'difficulty-pill__btn--easy-active' : ''}`}
             onClick={() => onToggleDifficulty('easy')}
             aria-pressed={difficulty === 'easy'}
           >
@@ -59,7 +59,7 @@ export default function Leaderboard({ scores, currentPlayer, gameNum, difficulty
           </button>
           <button
             type="button"
-            className={`difficulty-pill__btn ${difficulty === 'hard' ? 'difficulty-pill__btn--active' : ''}`}
+            className={`difficulty-pill__btn ${difficulty === 'hard' ? 'difficulty-pill__btn--hard-active' : ''}`}
             onClick={() => onToggleDifficulty('hard')}
             aria-pressed={difficulty === 'hard'}
           >

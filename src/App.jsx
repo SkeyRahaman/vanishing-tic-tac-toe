@@ -30,6 +30,8 @@ export default function App() {
   const [showRules, setShowRules] = useState(true);
 
   const cpuTimerRef = useRef(null);
+  const difficultyRef = useRef(difficulty);
+  difficultyRef.current = difficulty;
 
   // ─── Load solver table on mount ─────────────────────────────────
   useEffect(() => {
@@ -47,16 +49,16 @@ export default function App() {
 
   // ─── Difficulty Toggle Handler (Starts a new game with user first move) ────
   const handleToggleDifficulty = useCallback((newDifficulty) => {
-    if (newDifficulty === difficulty) return;
     if (cpuTimerRef.current) clearTimeout(cpuTimerRef.current);
     setIsThinking(false);
     setShowWinOverlay(false);
     setOverlayWinner(null);
     setDifficulty(newDifficulty);
-    // Start fresh game with User (PLAYER1) moving first
+    difficultyRef.current = newDifficulty;
+    // Always reset and start fresh game with User (PLAYER1) moving first!
     setGameState(createInitialState(PLAYER1));
     setFirstMoverForNextGame(PLAYER2);
-  }, [difficulty]);
+  }, []);
 
   // ─── CPU auto-play ───────────────────────────────────────────────
   useEffect(() => {
@@ -72,16 +74,17 @@ export default function App() {
       setGameState(prev => {
         if (prev.currentPlayer !== PLAYER2 || prev.winner) return prev;
 
+        const currentMode = difficultyRef.current;
         const stateKey = encodeGameState(prev);
         const entry = solverTable[stateKey];
 
         let cell = null;
 
-        if (difficulty === 'easy') {
+        if (currentMode === 'easy') {
           // Easy mode: beatable casual AI with missed blocks & casual moves
           cell = getEasyCpuMove(prev, solverTable);
         } else {
-          // Hard mode: unbeatable lookup
+          // Hard mode: 100% UNTOUCHED unbeatable solver lookup
           cell = entry?.bestMove;
         }
 
@@ -96,7 +99,7 @@ export default function App() {
         const { queues } = prev;
         const cellMap = getCellMap(prev);
         const board = Array.from({ length: 9 }, (_, i) => cellMap.get(i) || '.');
-        console.group(`%c🤖 CPU move (${difficulty}) → cell ${cell}`, 'color:#ff6b9d;font-weight:bold');
+        console.group(`%c🤖 CPU move [${currentMode.toUpperCase()}] → cell ${cell}`, 'color:#ff6b9d;font-weight:bold');
         console.log('Board before:', `\n${board.slice(0,3).join(' ')}\n${board.slice(3,6).join(' ')}\n${board.slice(6,9).join(' ')}`);
         console.log('P1 queue (X):', [...queues[PLAYER1]]);
         console.log('P2 queue (O):', [...queues[PLAYER2]]);

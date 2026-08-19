@@ -1,16 +1,66 @@
-# React + Vite
+# ⭕ Vanishing Tic-Tac-Toe ❌
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> A modern, fluid Tic-Tac-Toe web game with vanishing marks and an unbeatable mathematical solver.
 
-Currently, two official plugins are available:
+🌐 **Live Demo:** [https://skeyrahaman.github.io/vanishing-tic-tac-toe/](https://skeyrahaman.github.io/vanishing-tic-tac-toe/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🎮 How to Play
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **3×3 Grid:** Players take turns placing marks (**X** for You, **O** for CPU).
+2. **3 Marks Maximum:** Each player can only hold **3 marks** on the board at a time.
+3. **Vanishing Mechanic:** Placing a 4th mark causes your **oldest mark to vanish** before checking for wins.
+4. **Win Condition:** Align **3 standing marks in a row** (horizontal, vertical, or diagonal) to win!
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## ⚡ Game Modes
+
+- 🎲 **Easy Mode (Default):** A casual, beatable AI that plays casually, occasionally misses blocks, and gives you a fighting chance (~50%+ win rate for attentive players).
+- 🤖 **Hard Mode (Unbeatable):** Uses a complete, precomputed **Negamax game-tree solver** (66,682 states) with alpha-beta pruning and transposition tables. It is **mathematically impossible to defeat** the CPU in this mode.
+
+*Switch between modes anytime using the difficulty toggle in the leaderboard header — each toggle starts a fresh game with you moving first!*
+
+---
+
+## ✨ Features
+
+- **Apple-Inspired Design:** Glassmorphism materials (`backdrop-filter`), tailored HSL palette, dark theme, and fluid micro-animations.
+- **Physical Spring Animations:** Seamless gesture feedback and interruptible spring physics powered by `motion`.
+- **Precomputed Solver Table:** Instant $O(1)$ optimal move lookups without latency.
+- **Responsive & Accessible:** Built for touch screens and desktops alike, with full `prefers-reduced-motion` support.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React 19, Vite, Vanilla CSS
+- **Animations:** Motion (`motion/react`), Canvas Confetti
+- **Solver Engine:** Python 3 (Negamax with Alpha-Beta Pruning)
+- **Deployment:** GitHub Pages via GitHub Actions
+
+---
+
+## 🚀 Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/SkeyRahaman/vanishing-tic-tac-toe.git
+cd vanishing-tic-tac-toe
+
+# Install dependencies
+npm install
+
+# Start local dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+---
+
+## 📜 License
+
+MIT License. Free to play and explore!
