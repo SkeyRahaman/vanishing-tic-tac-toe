@@ -32,7 +32,7 @@ export default function App() {
 
   // ─── Load solver table on mount ─────────────────────────────────
   useEffect(() => {
-    fetch('/solver_table.json')
+    fetch(`${import.meta.env.BASE_URL}solver_table.json`)
       .then(r => r.json())
       .then(data => {
         setSolverTable(data);
