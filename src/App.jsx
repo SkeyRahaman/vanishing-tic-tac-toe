@@ -10,7 +10,7 @@ import WinOverlay from './components/WinOverlay';
 import RulesPopup from './components/RulesPopup';
 import HelpButton from './components/HelpButton';
 
-import { createInitialState, applyMove, getCellMap, encodeGameState, getLegalMoves, PLAYER1, PLAYER2 } from './engine/gameState';
+import { createInitialState, applyMove, getCellMap, encodeGameState, getLegalMoves, getEasyCpuMove, PLAYER1, PLAYER2 } from './engine/gameState';
 
 const CPU_THINK_DELAY_MS = 600; // ms before CPU places its mark
 
@@ -45,6 +45,19 @@ export default function App() {
       });
   }, []);
 
+  // ─── Difficulty Toggle Handler (Starts a new game with user first move) ────
+  const handleToggleDifficulty = useCallback((newDifficulty) => {
+    if (newDifficulty === difficulty) return;
+    if (cpuTimerRef.current) clearTimeout(cpuTimerRef.current);
+    setIsThinking(false);
+    setShowWinOverlay(false);
+    setOverlayWinner(null);
+    setDifficulty(newDifficulty);
+    // Start fresh game with User (PLAYER1) moving first
+    setGameState(createInitialState(PLAYER1));
+    setFirstMoverForNextGame(PLAYER2);
+  }, [difficulty]);
+
   // ─── CPU auto-play ───────────────────────────────────────────────
   useEffect(() => {
     if (
@@ -65,14 +78,8 @@ export default function App() {
         let cell = null;
 
         if (difficulty === 'easy') {
-          // Easy mode strategy: 50% optimal move from table, 50% random legal move
-          const playOptimal = Math.random() < 0.5;
-          if (playOptimal && entry?.bestMove !== undefined && entry?.bestMove !== null) {
-            cell = entry.bestMove;
-          } else {
-            const legal = getLegalMoves(prev);
-            cell = legal[Math.floor(Math.random() * legal.length)];
-          }
+          // Easy mode: beatable casual AI with missed blocks & casual moves
+          cell = getEasyCpuMove(prev, solverTable);
         } else {
           // Hard mode: unbeatable lookup
           cell = entry?.bestMove;
@@ -182,7 +189,7 @@ export default function App() {
         currentPlayer={gameState.currentPlayer}
         gameNum={gameNum}
         difficulty={difficulty}
-        onToggleDifficulty={setDifficulty}
+        onToggleDifficulty={handleToggleDifficulty}
       />
 
       <main className="game-area" role="main">

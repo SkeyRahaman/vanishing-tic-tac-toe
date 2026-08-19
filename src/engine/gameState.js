@@ -148,3 +148,66 @@ export function encodeGameState(state) {
     currentPlayer
   );
 }
+
+/**
+ * Easy mode AI move selection:
+ * - 50% chance to take an immediate winning move (50% misses it)
+ * - 30% chance to block a human winning threat (70% misses block, letting human win!)
+ * - Otherwise plays casual/random legal moves, with occasional solver advice (20%)
+ */
+export function getEasyCpuMove(state, solverTable) {
+  const legal = getLegalMoves(state);
+  if (!legal || legal.length === 0) return null;
+
+  // 1. Check if CPU (PLAYER2) has an immediate winning move
+  const cpuWinningMoves = legal.filter(cell => {
+    const nextState = applyMove(state, cell);
+    return nextState.winner === PLAYER2;
+  });
+
+  if (cpuWinningMoves.length > 0) {
+    // 50% chance CPU takes the win, 50% misses
+    if (Math.random() < 0.5) {
+      return cpuWinningMoves[Math.floor(Math.random() * cpuWinningMoves.length)];
+    }
+  }
+
+  // 2. Check if Human (PLAYER1) has a winning move next turn
+  const simP1State = {
+    ...state,
+    currentPlayer: PLAYER1,
+  };
+  const p1Legal = getLegalMoves(simP1State);
+  const p1WinningMoves = p1Legal.filter(cell => {
+    const nextState = applyMove(simP1State, cell);
+    return nextState.winner === PLAYER1;
+  });
+
+  if (p1WinningMoves.length > 0) {
+    // Check if CPU can block one of these winning cells
+    const blockMoves = legal.filter(cell => p1WinningMoves.includes(cell));
+    if (blockMoves.length > 0 && Math.random() < 0.3) {
+      return blockMoves[Math.floor(Math.random() * blockMoves.length)];
+    }
+    // Otherwise deliberately choose a non-blocking move if possible so user gets the win!
+    const nonBlockMoves = legal.filter(cell => !p1WinningMoves.includes(cell));
+    if (nonBlockMoves.length > 0) {
+      return nonBlockMoves[Math.floor(Math.random() * nonBlockMoves.length)];
+    }
+  }
+
+  // 3. 20% solver move, 80% random move
+  const stateKey = encodeGameState(state);
+  const entry = solverTable?.[stateKey];
+  if (
+    Math.random() < 0.2 &&
+    entry?.bestMove !== undefined &&
+    entry?.bestMove !== null &&
+    legal.includes(entry.bestMove)
+  ) {
+    return entry.bestMove;
+  }
+
+  return legal[Math.floor(Math.random() * legal.length)];
+}
+
