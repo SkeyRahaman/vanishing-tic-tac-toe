@@ -23,3 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 __pycache__/
+
+# Local-only files
+SKILL.md
+scripts/precompute.js
+src/engine/solver.js
+src/assets/hero.png
+src/assets/react.svg
+src/assets/vite.svg
