@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ─── Design Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --bg-base:       #07071a;
+  --bg-surface:    #0f0f2a;
+  --bg-card:       #14143a;
+  --bg-cell:       #1a1a48;
+  --bg-cell-hover: #20205a;
+
+  --p1-color:      #00e5ff;  /* cyan  – Player 1 (X) */
+  --p1-glow:       rgba(0, 229, 255, 0.35);
+  --p2-color:      #ff6b9d;  /* pink-coral – Player 2 (O) */
+  --p2-glow:       rgba(255, 107, 157, 0.35);
+
+  --text-primary:  #f0f0ff;
+  --text-secondary:#8888bb;
+  --text-muted:    #5555aa;
+
+  --border-subtle: rgba(255,255,255,0.07);
+  --border-glow:   rgba(255,255,255,0.12);
+
+  --glass-bg:      rgba(14,14,40,0.72);
+  --glass-blur:    20px;
+
+  /* Typography – Apple-style optical sizing */
+  --font-base:     'Inter', system-ui, sans-serif;
+
+  /* Spacing */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-base);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  overflow-x: hidden;
+
+  /* Radial gradient background */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0, 100, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 60, 160, 0.1) 0%, transparent 60%);
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--border-glow);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--bg-card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
